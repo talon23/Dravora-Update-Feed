@@ -1,0 +1,21 @@
+{
+    "schemaVersion":  3,
+    "caseId":  "c7865ca9-2ef7-5bed-a0bd-21e1f5f96a9e",
+    "status":  "ready-for-legal-patches-publication",
+    "issuedAtUtc":  "2026-07-27T12:56:56.4684295+00:00",
+    "acceptanceSha256":  "c66de298f0a7d0d1a8993b6fa8312e4bf4008514e2875075cc57c358f35e4717",
+    "distributionScope":  "publisher-wide",
+    "packId":  "dravora-uk-legal-baseline",
+    "packVersion":  "1.0.0",
+    "packageType":  "legal-cumulative",
+    "jurisdiction":  "GB",
+    "publisherApprovedBy":  "Andrew",
+    "publisherApprovedAtUtc":  "2026-07-27T11:43:55.1560000+00:00",
+    "publisherEvidenceSha256":  "f311795a86dd992708cf17f0437f531ec37e479ca0e87a0f5c274f31624dca74",
+    "packageFile":  "dravora-uk-legal-baseline-legal-cumulative-GB-1.0.0.dravlegal",
+    "packageSha256":  "ad09d161adfa88f262ad78f91a0b35a52e4e9f43a5f7c8059c102f1554ec2552",
+    "signatureFile":  "dravora-uk-legal-baseline-legal-cumulative-GB-1.0.0.dravlegal.sig",
+    "signatureSha256":  "39ca13dcc1205c1bbaa5fd9c40f710d61a01d1ce8f457fc47e6f6458bfb389de",
+    "hashSidecarFile":  "dravora-uk-legal-baseline-legal-cumulative-GB-1.0.0.dravlegal.sha256.txt",
+    "hashSidecarSha256":  "77eac9049851ae09350edf953ea61f76f1c313ba41e15fb4f09c039f35c5a36b"
+}
