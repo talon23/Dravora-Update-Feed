@@ -5,6 +5,7 @@ import {
   ALGORITHM,
   REGISTRY_EPOCH,
   canonicalize,
+  historyRegistryPath,
   parseCanonicalJson,
   sha256Label,
   signingBytes,
@@ -103,6 +104,24 @@ test("rollback, equivocation, and chain gaps are rejected", () => {
   assert.throws(() => validateReplay(same, `sha256:${"4".repeat(64)}`, data.trust, checkpoint), /equivocation/);
   const gap = { ...same, sequence: 4 };
   assert.throws(() => validateReplay(gap, `sha256:${"5".repeat(64)}`, data.trust, checkpoint), /discontinuity/);
+});
+
+test("immutable history paths bind sequence and payload digest", () => {
+  const digest = `sha256:${"a".repeat(64)}`;
+  assert.equal(
+    historyRegistryPath(42, digest),
+    `license-registry/history/0000000000000042-${"a".repeat(64)}/registry.json`,
+  );
+});
+
+test("an offline client can advance through a verified contiguous history", () => {
+  const checkpoint = { registry_epoch: REGISTRY_EPOCH, sequence: 1, payload_sha256: `sha256:${"1".repeat(64)}` };
+  const second = { sequence: 2, previous_sequence: 1, previous_payload_sha256: checkpoint.payload_sha256 };
+  const secondDigest = `sha256:${"2".repeat(64)}`;
+  assert.equal(validateReplay(second, secondDigest, { minimum_sequence: 1 }, checkpoint), "advanced");
+  const nextCheckpoint = { registry_epoch: REGISTRY_EPOCH, sequence: 2, payload_sha256: secondDigest };
+  const third = { sequence: 3, previous_sequence: 2, previous_payload_sha256: secondDigest };
+  assert.equal(validateReplay(third, `sha256:${"3".repeat(64)}`, { minimum_sequence: 1 }, nextCheckpoint), "advanced");
 });
 
 test("non-canonical JSON and unexpected fields fail closed", () => {

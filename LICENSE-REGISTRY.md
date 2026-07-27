@@ -13,6 +13,9 @@ identity, contact detail, diagnostic, or signing-ceremony record.
 - Trust metadata: `license-registry/trust.json`
 - Payload: `license-registry/registry.json`
 - Detached signature: `license-registry/registry.sig.json`
+- Immutable history:
+  `license-registry/history/<sequence16>-<payloadhex>/registry.json` and
+  `registry.sig.json`
 
 The schemas in `schemas/` are authoritative for field shape. Production JSON
 must use RFC 8785 JSON Canonicalization Scheme (JCS) bytes and UTF-8 without a
@@ -92,13 +95,22 @@ and payload digest in rollback-protected local state.
 The payload and signature must be fetched from the same resolved Git commit,
 never as separate moving-branch reads.
 
+If the latest sequence is more than one ahead of the cached checkpoint, the
+client verifies each missing immutable history entry in order before accepting
+latest. `sequence16` is the zero-padded 16-digit decimal sequence and
+`payloadhex` is the 64-character lowercase payload digest without `sha256:`.
+Every history directory therefore binds its sequence and digest in its path.
+There is no reset or gap-skipping path.
+
 ## Publication
 
 The publisher reads and validates the current registry, creates the next linked
-payload and signature, then writes both in one Git commit using compare-and-swap
-against the exact observed `License-Checker` head. A stale head, stale sequence,
-signature failure, validation failure, or non-fast-forward update fails closed.
-The publisher must not auto-rebase, force-push, or overwrite concurrent state.
+payload and signature, then writes latest plus the new immutable history pair in
+one Git commit using compare-and-swap against the exact observed
+`License-Checker` head. An existing history path is never overwritten or
+deleted. A stale head, stale sequence, history collision, signature failure,
+validation failure, or non-fast-forward update fails closed. The publisher must
+not auto-rebase, force-push, or overwrite concurrent state.
 
 Provisioning requires an independently generated dedicated private key outside
 Git and an explicitly approved public-key pin. This repository contains no
@@ -117,6 +129,8 @@ Only these tracked paths are allowed:
 - `license-registry/trust.json`
 - optional `license-registry/registry.json`
 - optional `license-registry/registry.sig.json`
+- optional immutable `license-registry/history/<sequence16>-<payloadhex>/registry.json`
+  and `registry.sig.json` pairs
 - `schemas/*.schema.json`
 - `scripts/*.mjs`
 - `tests/*.test.mjs`

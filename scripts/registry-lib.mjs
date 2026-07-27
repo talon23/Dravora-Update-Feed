@@ -110,6 +110,11 @@ export function signingBytes(canonicalRegistryBytes) {
   return Buffer.concat([DOMAIN, Buffer.from(canonicalRegistryBytes)]);
 }
 
+export function historyRegistryPath(sequence, digest) {
+  if (!isSafeUint(sequence, 1) || !digestPattern.test(digest)) fail("invalid history path input");
+  return `license-registry/history/${String(sequence).padStart(16, "0")}-${digest.slice(7)}/registry.json`;
+}
+
 export function validateTrust(trust) {
   exactKeys(trust, ["contract", "registry_id", "registry_epoch", "status", "minimum_sequence", "policy", "keys"], "trust");
   if (trust.contract !== TRUST_CONTRACT || trust.registry_id !== REGISTRY_ID || trust.registry_epoch !== REGISTRY_EPOCH) fail("trust identity mismatch");
@@ -183,7 +188,9 @@ export function validateRegistry(registry, now = new Date()) {
 
 export function validateSignatureEnvelope(signature) {
   exactKeys(signature, ["contract", "registry_path", "registry_epoch", "sequence", "payload_sha256", "algorithm", "key_id", "signature_base64"], "signature");
-  if (signature.contract !== SIGNATURE_CONTRACT || signature.registry_path !== REGISTRY_PATH || signature.registry_epoch !== REGISTRY_EPOCH || signature.algorithm !== ALGORITHM) fail("signature envelope identity mismatch");
+  const currentPath = signature.registry_path === REGISTRY_PATH;
+  const historyPath = signature.registry_path === historyRegistryPath(signature.sequence, signature.payload_sha256);
+  if (signature.contract !== SIGNATURE_CONTRACT || (!currentPath && !historyPath) || signature.registry_epoch !== REGISTRY_EPOCH || signature.algorithm !== ALGORITHM) fail("signature envelope identity mismatch");
   if (!isSafeUint(signature.sequence, 1) || !digestPattern.test(signature.payload_sha256) || !keyIdPattern.test(signature.key_id)) fail("invalid signature envelope value");
   validBase64(signature.signature_base64, "signature_base64");
 }

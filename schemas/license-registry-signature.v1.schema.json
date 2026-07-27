@@ -7,7 +7,10 @@
   "required": ["contract", "registry_path", "registry_epoch", "sequence", "payload_sha256", "algorithm", "key_id", "signature_base64"],
   "properties": {
     "contract": {"const": "dravora-license-registry-signature/v1"},
-    "registry_path": {"const": "license-registry/registry.json"},
+    "registry_path": {
+      "type": "string",
+      "pattern": "^license-registry/(registry\\.json|history/[0-9]{16}-[0-9a-f]{64}/registry\\.json)$"
+    },
     "registry_epoch": {"const": "63d1c863-c23a-4a8c-9cd0-8e1274a9f423"},
     "sequence": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
     "payload_sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
