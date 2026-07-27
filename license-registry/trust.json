@@ -1,0 +1,1 @@
+{"contract":"dravora-license-registry-trust/v1","keys":[],"minimum_sequence":1,"policy":{"max_future_skew_seconds":300,"max_validity_seconds":604800},"registry_epoch":"63d1c863-c23a-4a8c-9cd0-8e1274a9f423","registry_id":"dravora-production","status":"unprovisioned"}

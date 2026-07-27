@@ -1,0 +1,13 @@
+{
+  "name": "dravora-license-registry-contract",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "validate": "node scripts/validate-registry.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
