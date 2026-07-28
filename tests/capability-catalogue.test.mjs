@@ -75,6 +75,17 @@ test("rejects lowercase digests and unexpected fields", () => {
   );
 });
 
+test("accepts signed capability assets up to 1 GiB and rejects larger declarations", () => {
+  assert.equal(
+    validateCatalogue({ ...catalogue, packages: [{ ...professional, length: 629145600 }] }).packages[0].length,
+    629145600,
+  );
+  assert.throws(
+    () => validateCatalogue({ ...catalogue, packages: [{ ...professional, length: 1073741825 }] }),
+    /1 to 1073741824/,
+  );
+});
+
 test("binds catalogue length and digest to exact local package bytes", async () => {
   const directory = await mkdtemp(join(tmpdir(), "dravora-capability-"));
   try {

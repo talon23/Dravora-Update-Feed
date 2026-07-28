@@ -34,7 +34,7 @@
             "pattern": "^https://github\\.com/talon23/Dravora-Update-Feed/releases/download/[^/?#]+/Dravora-runtime-[0-9A-Za-z._-]+-(development|test|staging|production)-(developer|test|staging|stable)\\.dravup$"
           },
           "sha256": {"type": "string", "pattern": "^[0-9A-F]{64}$"},
-          "length": {"type": "integer", "minimum": 1, "maximum": 524288000}
+          "length": {"type": "integer", "minimum": 1, "maximum": 1073741824}
         }
       }
     }

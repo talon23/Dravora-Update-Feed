@@ -46,8 +46,8 @@ export function validateCatalogue(catalogue) {
     }
     if (!assetPattern.test(entry.assetName)) throw new Error("invalid capability asset name");
     if (!digestPattern.test(entry.sha256)) throw new Error("sha256 must be 64 uppercase hexadecimal characters");
-    if (!Number.isSafeInteger(entry.length) || entry.length < 1 || entry.length > 524288000) {
-      throw new Error("length must be an integer from 1 to 524288000");
+    if (!Number.isSafeInteger(entry.length) || entry.length < 1 || entry.length > 1073741824) {
+      throw new Error("length must be an integer from 1 to 1073741824");
     }
 
     let uri;
