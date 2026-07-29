@@ -19,3 +19,22 @@ moving branch file in this repository.
 
 See [`CAPABILITY-RELEASES.md`](CAPABILITY-RELEASES.md) for the frozen public
 delivery contract and local pre-publication validation command.
+
+## Add-on package catalogues
+
+Native Dravora add-ons use dormant feed contracts only at this stage. This
+repository can validate add-on status and package catalogue JSON before any
+future publication, but this branch does not publish, sign, download or
+activate add-ons.
+
+- `schemas/addon-licence-status-registry.v1.schema.json` defines the public
+  add-on entitlement status registry shape.
+- `schemas/addon-package-catalogue.v1.schema.json` defines signed `.dravup`
+  add-on package catalogue entries.
+- `scripts/addon-catalogue-lib.mjs` validates privacy-minimised status entries,
+  exact GitHub release asset URLs, uppercase SHA-256 values, package lengths,
+  duplicate add-on IDs and immutable package identity.
+
+Business remains provisional until the exact `BUSINESS EXTERNAL-TEST READY`
+handoff. `assuranceops` must not be published or activated as a Business add-on
+before that gate.

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/talon23/Dravora-Update-Feed/blob/patches/schemas/addon-licence-status-registry.v1.schema.json",
+  "title": "Dravora add-on licence status registry v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "registryEpoch", "sequence", "issuedAtUtc", "expiresAtUtc", "entries"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "kind": { "const": "dravora-addon-licence-status-registry" },
+    "registryEpoch": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "issuedAtUtc": { "type": "string", "format": "date-time" },
+    "expiresAtUtc": { "type": "string", "format": "date-time" },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["entitlementId", "addOnId", "licenceSha256", "status", "notBeforeUtc", "expiresAtUtc", "reasonCode"],
+        "properties": {
+          "entitlementId": { "type": "string", "format": "uuid" },
+          "addOnId": { "type": "string", "pattern": "^[a-z]+ops$" },
+          "licenceSha256": { "type": "string", "pattern": "^[0-9A-F]{64}$" },
+          "status": { "enum": ["active", "suspended", "revoked", "retired"] },
+          "notBeforeUtc": { "type": "string", "format": "date-time" },
+          "expiresAtUtc": { "type": "string", "format": "date-time" },
+          "reasonCode": { "type": ["string", "null"], "maxLength": 80 }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/talon23/Dravora-Update-Feed/blob/patches/schemas/addon-package-catalogue.v1.schema.json",
+  "title": "Dravora add-on package catalogue v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "catalogueEpoch", "sequence", "issuedAtUtc", "expiresAtUtc", "environment", "channel", "packages"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "kind": { "const": "dravora-addon-package-catalogue" },
+    "catalogueEpoch": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "issuedAtUtc": { "type": "string", "format": "date-time" },
+    "expiresAtUtc": { "type": "string", "format": "date-time" },
+    "environment": { "enum": ["development", "test", "staging", "production"] },
+    "channel": { "enum": ["developer", "test", "staging", "stable"] },
+    "packages": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["addOnId", "addOnVersion", "packageFileName", "packageUri", "packageSha256", "packageLength", "descriptorSha256", "registrySha256", "immutableIdentity", "processor", "payloadNamespace", "status"],
+        "properties": {
+          "addOnId": { "type": "string", "pattern": "^[a-z]+ops$" },
+          "addOnVersion": { "type": "string", "pattern": "^1\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$" },
+          "packageFileName": { "type": "string", "pattern": "^Dravora-addon-[a-z]+ops-1\\.[0-9]+\\.[0-9]+-(development|test|staging|production)-(developer|test|staging|stable)\\.dravup$" },
+          "packageUri": { "type": "string", "pattern": "^https://github\\.com/talon23/Dravora-Update-Feed/releases/download/[^/?#]+/Dravora-addon-[a-z]+ops-1\\.[0-9]+\\.[0-9]+-(development|test|staging|production)-(developer|test|staging|stable)\\.dravup$" },
+          "packageSha256": { "type": "string", "pattern": "^[0-9A-F]{64}$" },
+          "packageLength": { "type": "integer", "minimum": 1, "maximum": 1073741824 },
+          "descriptorSha256": { "type": "string", "pattern": "^[0-9A-F]{64}$" },
+          "registrySha256": { "type": "string", "pattern": "^[0-9A-F]{64}$" },
+          "immutableIdentity": { "type": "string", "pattern": "^addon/[a-z]+ops/(development|test|staging|production)/(developer|test|staging|stable)/1\\.[0-9]+\\.[0-9]+$" },
+          "processor": { "const": "dravora.addon.v1" },
+          "payloadNamespace": { "type": "string", "pattern": "^addons/[a-z]+ops/$" },
+          "status": { "enum": ["available", "withdrawn", "revoked"] }
+        }
+      }
+    }
+  }
+}
