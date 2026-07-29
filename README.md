@@ -27,6 +27,9 @@ repository can validate add-on status and package catalogue JSON before any
 future publication, but this branch does not publish, sign, download or
 activate add-ons.
 
+Contract validation tooling targets Node.js 24.18.0 LTS or newer. Node remains
+feed/developer tooling only and is not a Dravora native runtime dependency.
+
 - `schemas/addon-licence-status-registry.v1.schema.json` defines the public
   add-on entitlement status registry shape.
 - `schemas/addon-package-catalogue.v1.schema.json` defines signed `.dravup`

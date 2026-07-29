@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -108,4 +109,9 @@ test("binds declared add-on package length and digest to local bytes", async () 
   } finally {
     await rm(directory, { recursive: true, force: true });
   }
+});
+
+test("requires current Node LTS tooling floor for add-on feed validation", () => {
+  const manifest = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+  assert.equal(manifest.engines.node, ">=24.18.0");
 });
