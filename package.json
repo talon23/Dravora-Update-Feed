@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "validate:installer": "node scripts/validate-installer-download-channel.mjs"
   },
   "engines": {
     "node": ">=20"

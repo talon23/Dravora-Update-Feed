@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "kind": "dravora-external-tester-installer-channel",
+  "channelId": "external-testing",
+  "environment": "test",
+  "packageChannel": "test",
+  "releaseTag": "dravora-standalone-1.2.6-external-test.1",
+  "issuedAtUtc": "2026-08-03T00:00:00Z",
+  "productionPublication": {
+    "status": "blocked",
+    "reason": "External tester download only; production requires the separate signed release-candidate approval path."
+  },
+  "installer": {
+    "product": "dravora-standalone",
+    "version": "1.2.6",
+    "runtime": "native-csharp-dotnet-10",
+    "installerTechnology": "NSIS-3",
+    "fileName": "Dravora-Standalone-1.2.6-Tester-Setup.exe",
+    "downloadUri": "https://github.com/talon23/Dravora-Update-Feed/releases/download/dravora-standalone-1.2.6-external-test.1/Dravora-Standalone-1.2.6-Tester-Setup.exe",
+    "sha256": "CFBAD83BB95F21CC262DD4FFAC235F46B43B339F4DCE46161C80CD6A156E9810",
+    "length": 137274400,
+    "authenticodeStatus": "not_signed_test_only",
+    "allowedUnsignedReason": "Dravora test environment policy allows unsigned tester installers; production remains blocked until Authenticode signing is complete.",
+    "buildReceipt": {
+      "fileName": "Dravora-Standalone-1.2.6-Tester-Setup.build-receipt.json",
+      "downloadUri": "https://github.com/talon23/Dravora-Update-Feed/releases/download/dravora-standalone-1.2.6-external-test.1/Dravora-Standalone-1.2.6-Tester-Setup.build-receipt.json",
+      "sha256": "7DEABAD8918668D596062A728F6B1242C466139EB0549819234BF5AFB3074DC1",
+      "length": 1748
+    }
+  },
+  "runtimePackages": [
+    {
+      "edition": "professional",
+      "fileName": "Dravora-runtime-1.2.6-matched20260802T183349Z-professional-test-test.dravup",
+      "downloadUri": "https://github.com/talon23/Dravora-Update-Feed/releases/download/dravora-standalone-1.2.6-external-test.1/Dravora-runtime-1.2.6-matched20260802T183349Z-professional-test-test.dravup",
+      "sha256": "2AF53CEEA33294481930058B20261476810928E7526620FF9EDEAF0E72DEC7EC",
+      "length": 258170977,
+      "trustPublicKeySha256": "2A99A1DC26D8BEA1F155D61837196A6F60576A33BF003CE883EE4BFF36ADDA43",
+      "status": "available"
+    },
+    {
+      "edition": "business",
+      "fileName": "Dravora-runtime-1.2.6-matched20260802T183349Z-business-test-test.dravup",
+      "downloadUri": "https://github.com/talon23/Dravora-Update-Feed/releases/download/dravora-standalone-1.2.6-external-test.1/Dravora-runtime-1.2.6-matched20260802T183349Z-business-test-test.dravup",
+      "sha256": "01EF797885EAB3907AAF0797B3BA971826D75993E326042DF8CDCCB6B01C9D52",
+      "length": 258170918,
+      "trustPublicKeySha256": "2A99A1DC26D8BEA1F155D61837196A6F60576A33BF003CE883EE4BFF36ADDA43",
+      "status": "available"
+    },
+    {
+      "edition": "enterprise",
+      "fileName": "Dravora-runtime-1.2.6-matched20260802T183349Z-enterprise-test-test.dravup",
+      "downloadUri": "https://github.com/talon23/Dravora-Update-Feed/releases/download/dravora-standalone-1.2.6-external-test.1/Dravora-runtime-1.2.6-matched20260802T183349Z-enterprise-test-test.dravup",
+      "sha256": "45F16D0F7B4C3A0BAAC52D8B84F7C13668F18991823E475D72D632C4D9966F1E",
+      "length": 258171003,
+      "trustPublicKeySha256": "2A99A1DC26D8BEA1F155D61837196A6F60576A33BF003CE883EE4BFF36ADDA43",
+      "status": "available"
+    }
+  ],
+  "source": {
+    "repository": "talon23/DravoraHSE",
+    "branch": "develop",
+    "commit": "74fc69fc394c3e94defa1f24f214a207a425d7e4",
+    "trackedClean": true
+  },
+  "trust": {
+    "updateTrustRootId": "dravora-test-update",
+    "updatePublicKeySha256": "2A99A1DC26D8BEA1F155D61837196A6F60576A33BF003CE883EE4BFF36ADDA43",
+    "licencePublicKeySha256": "01BE9D9D44E47AD3B18B9D870B56AFEAC974C599BD8B3F271BFE9F053C2E4212"
+  },
+  "validation": {
+    "vmEditionMatrix": "passed",
+    "vmEditionTransitionMatrix": "passed",
+    "forbiddenAssistantBrandHits": 0,
+    "vmSnapshotsPresent": false,
+    "windowsUpdatesDisabled": true
+  }
+}

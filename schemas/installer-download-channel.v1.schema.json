@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/talon23/Dravora-Update-Feed/blob/codex/external-tester-download-feed-20260803/schemas/installer-download-channel.v1.schema.json",
+  "title": "Dravora external tester installer channel v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "channelId", "environment", "packageChannel", "releaseTag", "issuedAtUtc", "productionPublication", "installer", "runtimePackages", "source", "trust", "validation"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "kind": {"const": "dravora-external-tester-installer-channel"},
+    "channelId": {"const": "external-testing"},
+    "environment": {"const": "test"},
+    "packageChannel": {"const": "test"},
+    "releaseTag": {"type": "string", "pattern": "^dravora-standalone-[0-9]+\\.[0-9]+\\.[0-9]+-external-test\\.[0-9]+$"},
+    "issuedAtUtc": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"},
+    "productionPublication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reason"],
+      "properties": {
+        "status": {"const": "blocked"},
+        "reason": {"type": "string", "minLength": 1, "maxLength": 240}
+      }
+    },
+    "installer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["product", "version", "runtime", "installerTechnology", "fileName", "downloadUri", "sha256", "length", "authenticodeStatus", "allowedUnsignedReason", "buildReceipt"],
+      "properties": {
+        "product": {"const": "dravora-standalone"},
+        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+        "runtime": {"const": "native-csharp-dotnet-10"},
+        "installerTechnology": {"const": "NSIS-3"},
+        "fileName": {"type": "string", "pattern": "^Dravora-Standalone-[0-9]+\\.[0-9]+\\.[0-9]+-Tester-Setup\\.exe$"},
+        "downloadUri": {"type": "string"},
+        "sha256": {"type": "string", "pattern": "^[0-9A-F]{64}$"},
+        "length": {"type": "integer", "minimum": 1, "maximum": 2147483648},
+        "authenticodeStatus": {"enum": ["valid", "not_signed_test_only"]},
+        "allowedUnsignedReason": {"type": "string", "minLength": 1, "maxLength": 240},
+        "buildReceipt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["fileName", "downloadUri", "sha256", "length"],
+          "properties": {
+            "fileName": {"type": "string", "pattern": "^Dravora-Standalone-[0-9]+\\.[0-9]+\\.[0-9]+-Tester-Setup\\.build-receipt\\.json$"},
+            "downloadUri": {"type": "string"},
+            "sha256": {"type": "string", "pattern": "^[0-9A-F]{64}$"},
+            "length": {"type": "integer", "minimum": 1, "maximum": 1048576}
+          }
+        }
+      }
+    },
+    "runtimePackages": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["edition", "fileName", "downloadUri", "sha256", "length", "trustPublicKeySha256", "status"],
+        "properties": {
+          "edition": {"enum": ["professional", "business", "enterprise"]},
+          "fileName": {"type": "string", "pattern": "^Dravora-runtime-[0-9A-Za-z._-]+-(professional|business|enterprise)-test-test\\.dravup$"},
+          "downloadUri": {"type": "string"},
+          "sha256": {"type": "string", "pattern": "^[0-9A-F]{64}$"},
+          "length": {"type": "integer", "minimum": 1, "maximum": 1073741824},
+          "trustPublicKeySha256": {"type": "string", "pattern": "^[0-9A-F]{64}$"},
+          "status": {"enum": ["available", "withdrawn", "revoked"]}
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "branch", "commit", "trackedClean"],
+      "properties": {
+        "repository": {"const": "talon23/DravoraHSE"},
+        "branch": {"const": "develop"},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "trackedClean": {"const": true}
+      }
+    },
+    "trust": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["updateTrustRootId", "updatePublicKeySha256", "licencePublicKeySha256"],
+      "properties": {
+        "updateTrustRootId": {"const": "dravora-test-update"},
+        "updatePublicKeySha256": {"type": "string", "pattern": "^[0-9A-F]{64}$"},
+        "licencePublicKeySha256": {"type": "string", "pattern": "^[0-9A-F]{64}$"}
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vmEditionMatrix", "vmEditionTransitionMatrix", "forbiddenAssistantBrandHits", "vmSnapshotsPresent", "windowsUpdatesDisabled"],
+      "properties": {
+        "vmEditionMatrix": {"const": "passed"},
+        "vmEditionTransitionMatrix": {"const": "passed"},
+        "forbiddenAssistantBrandHits": {"const": 0},
+        "vmSnapshotsPresent": {"const": false},
+        "windowsUpdatesDisabled": {"const": true}
+      }
+    }
+  }
+}
