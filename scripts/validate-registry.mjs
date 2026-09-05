@@ -74,7 +74,11 @@ if (hasRegistry) {
     const signaturePath = historyPath.replace(/registry\.json$/, "registry.sig.json");
     if (!historySignatures.includes(signaturePath)) throw new Error(`missing history signature: ${signaturePath}`);
     const historySignature = parseCanonicalJson(readFileSync(resolve(root, signaturePath)), signaturePath);
-    verifyRegistrySignature(historyBytes, historyRegistry, historySignature, trust);
+    // History entries are immutable and can never be re-issued, so they are
+    // verified as of their own issuance time rather than against the real
+    // wall clock (which would make every entry permanently unverifiable a
+    // week after publication). The live registry below still uses real time.
+    verifyRegistrySignature(historyBytes, historyRegistry, historySignature, trust, new Date(), { asOfIssuedAt: true });
     if (previous === null) {
       if (historyRegistry.sequence !== 1) throw new Error("history must begin at genesis");
     } else if (

@@ -138,7 +138,10 @@ export function validateTrust(trust) {
     if (!match) fail("public_key_xml is not canonical .NET RSA XML");
     const modulus = validBase64(match[1], "RSA modulus");
     const exponent = validBase64(match[2], "RSA exponent");
-    if (modulus.length < 256 || (modulus.length === 256 && (modulus[0] & 0x80) === 0)) fail("RSA modulus must be at least 2048 bits");
+    let modulusStart = 0;
+    while (modulusStart < modulus.length - 1 && modulus[modulusStart] === 0) modulusStart += 1;
+    const significantModulus = modulus.subarray(modulusStart);
+    if (significantModulus.length < 256 || (significantModulus.length === 256 && (significantModulus[0] & 0x80) === 0)) fail("RSA modulus must be at least 2048 bits");
     const exponentValue = exponent.reduce((value, byte) => (value << 8n) | BigInt(byte), 0n);
     if (exponent.length > 8 || exponentValue < 3n || (exponentValue & 1n) === 0n) fail("RSA exponent must be a small odd integer");
     if (key.public_key_fingerprint !== sha256Label(Buffer.from(key.public_key_xml, "utf8"))) fail("public key fingerprint mismatch");
@@ -150,7 +153,7 @@ export function validateTrust(trust) {
   if (trust.status === "active" && activeKeyCount === 0) fail("active trust requires an active key");
 }
 
-export function validateRegistry(registry, now = new Date()) {
+export function validateRegistry(registry, now = new Date(), { asOfIssuedAt = false } = {}) {
   exactKeys(registry, ["contract", "registry_id", "registry_epoch", "sequence", "issued_at", "expires_at", "previous_sequence", "previous_payload_sha256", "records"], "registry");
   if (registry.contract !== CONTRACT || registry.registry_id !== REGISTRY_ID || registry.registry_epoch !== REGISTRY_EPOCH) fail("registry identity mismatch");
   if (!isSafeUint(registry.sequence, 1) || !isSafeUint(registry.previous_sequence)) fail("invalid sequence");
@@ -161,7 +164,11 @@ export function validateRegistry(registry, now = new Date()) {
   }
   const issued = parseTimestamp(registry.issued_at, "issued_at");
   const expires = parseTimestamp(registry.expires_at, "expires_at");
-  const nowMs = now.getTime();
+  // For an immutable historical entry, freshness is checked as of the moment
+  // it was issued rather than against the real wall clock, since it can
+  // never be re-issued and will otherwise become permanently unverifiable.
+  // The live/current registry keeps using real wall-clock time (the default).
+  const nowMs = asOfIssuedAt ? issued : now.getTime();
   if (issued > nowMs + MAX_FUTURE_SKEW_SECONDS * 1000) fail("registry issued too far in the future");
   if (expires <= issued || expires - issued > MAX_VALIDITY_SECONDS * 1000) fail("registry validity interval is invalid");
   if (expires <= nowMs) fail("registry is expired");
@@ -202,16 +209,21 @@ function xmlKeyToJwk(xml) {
   return { kty: "RSA", n: base64url(match[1]), e: base64url(match[2]) };
 }
 
-export function verifyRegistrySignature(registryBytes, registry, envelope, trust, now = new Date()) {
+export function verifyRegistrySignature(registryBytes, registry, envelope, trust, now = new Date(), { asOfIssuedAt = false } = {}) {
   validateTrust(trust);
-  validateRegistry(registry, now);
+  validateRegistry(registry, now, { asOfIssuedAt });
   validateSignatureEnvelope(envelope);
   const digest = sha256Label(registryBytes);
   if (envelope.registry_epoch !== registry.registry_epoch || envelope.sequence !== registry.sequence || envelope.payload_sha256 !== digest) fail("signature envelope does not bind this payload");
   const key = trust.keys.find((candidate) => candidate.key_id === envelope.key_id);
-  if (!key || key.status !== "active") fail("signature key is not active");
-  const nowMs = now.getTime();
-  if (parseTimestamp(key.not_before, "key.not_before") > nowMs || (key.not_after !== null && parseTimestamp(key.not_after, "key.not_after") <= nowMs)) fail("signature key is outside its validity window");
+  if (!key) fail("signature key is not known");
+  // A retired key still validly signed everything it signed while active; only
+  // the live/current registry requires the key to be active *right now*. An
+  // immutable historical entry is instead checked against its own issuance
+  // time below, so key rotation/retirement cannot retroactively break it.
+  if (!asOfIssuedAt && key.status !== "active") fail("signature key is not active");
+  const referenceMs = asOfIssuedAt ? parseTimestamp(registry.issued_at, "issued_at") : now.getTime();
+  if (parseTimestamp(key.not_before, "key.not_before") > referenceMs || (key.not_after !== null && parseTimestamp(key.not_after, "key.not_after") <= referenceMs)) fail("signature key is outside its validity window");
   const publicKey = createPublicKey({ key: xmlKeyToJwk(key.public_key_xml), format: "jwk" });
   const verified = verifySignature("sha256", signingBytes(registryBytes), { key: publicKey, padding: constants.RSA_PKCS1_PADDING }, Buffer.from(envelope.signature_base64, "base64"));
   if (!verified) fail("registry signature verification failed");
